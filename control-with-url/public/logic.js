@@ -55,7 +55,7 @@ async function getUrl() {
   let json = await resp.json();
 
   // If the user input was not blank and a url was returned update the url
-  if (json.url && (request.filterValue ||request.dimension)){
+  if (json.url) { // && (request.filterValue ||request.dimension)){
     url = json.url;
   }
 

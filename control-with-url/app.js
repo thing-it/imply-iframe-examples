@@ -1,11 +1,13 @@
 const axios = require('axios');
 const express = require('express');
+const https = require('https');
 
 const app = express();
-const port = 3000;
+const port = 8088;
 
 // Update API token here
-const IMPLY_API_TOKEN = "b2c9b5cd-84c6-4219-9556-8eef5e52a5fb";
+const IMPLY_API_TOKEN = "30b2cf42-acc7-436e-b0e6-613a9504164e";
+const PIVOT_BASE_URI = "https://pivot.internal.thing-it.com:9095";
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -24,7 +26,7 @@ app.post("/mkurl-dataCube", async function (req, res) {
   }
 
   const essence = {
-    "dataCube": "druid_wikipedia",
+    "dataCube": "c1b0",
     "filter": {
       "clauses": [
         {
@@ -35,7 +37,7 @@ app.post("/mkurl-dataCube", async function (req, res) {
               "op": "ref",
               "name": "m"
             },
-            "duration": "P1D",
+            "duration": "P3M",
             "step": -1
           }
         }
@@ -66,15 +68,16 @@ app.post("/mkurl-dataCube", async function (req, res) {
   let response;
   try{
     response = await axios({
-      url: 'http://localhost:9095/api/v1/mkurl',
+      url: `${PIVOT_BASE_URI}/api/v1/mkurl`,
       method: 'post',
       headers: {
         "x-imply-api-token": IMPLY_API_TOKEN
       },
       data: {
-        domain: "http://localhost:9095",
+        domain: `${PIVOT_BASE_URI}`,
         essence: essence
-      }
+      },
+      httpsAgent: new https.Agent({rejectUnauthorized: false}), // accept self-signed TLS cert
     });
   } catch (e) {
     console.error(e);
@@ -102,7 +105,7 @@ app.post("/mkurl-dataCube", async function (req, res) {
 app.post("/mkurl-dashboard", async function (req, res) {
   // Set request essence
   const essence = {
-    "dashboard": "909c",
+    "dashboard": "9dd9",
     "filter": {
       "clauses": [
         {
@@ -125,15 +128,16 @@ app.post("/mkurl-dashboard", async function (req, res) {
   let response;
   try {
     response = await axios({
-      url: 'http://localhost:9095/api/v1/mkurl',
+      url: `${PIVOT_BASE_URI}/api/v1/mkurl`,
       method: 'post',
       headers: {
         "x-imply-api-token": IMPLY_API_TOKEN
       },
       data: {
-        domain: "http://localhost:9095",
+        domain: `${PIVOT_BASE_URI}`,
         essence: essence
-      }
+      },
+      httpsAgent: new https.Agent({rejectUnauthorized: false}), // accept self-signed TLS cert
     });
   } catch (e) {
     console.error(e);
